@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --bg: #0A0F1E;
+  --surface: #111827;
+  --accent: #00D4AA;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --text-primary: #F9FAFB;
+  --text-muted: #6B7280;
+  --border: rgba(255, 255, 255, 0.07);
+}
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Syne', sans-serif;
+  background: radial-gradient(circle at top left, rgba(0, 212, 170, 0.14), transparent 30%),
+    linear-gradient(180deg, #0A0F1E 0%, #060913 100%);
+  color: var(--text-primary);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.glass {
+  border: 1px solid var(--border);
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+.text-mono {
+  font-family: 'DM Mono', monospace;
+}
+
+.floating-particles::before,
+.floating-particles::after {
+  content: '';
+  position: absolute;
+  inset: auto;
+  width: 180px;
+  height: 180px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(0, 212, 170, 0.22), transparent 60%);
+  filter: blur(18px);
+  animation: float 12s ease-in-out infinite;
+}
+
+.floating-particles::before {
+  top: 8%;
+  left: 10%;
+}
+
+.floating-particles::after {
+  bottom: 8%;
+  right: 10%;
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -18px, 0) scale(1.06); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease both;
+}
