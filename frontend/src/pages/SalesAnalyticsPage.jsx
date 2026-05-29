@@ -1,18 +1,19 @@
 import { useMemo, useState } from 'react';
 import { format } from 'date-fns';
-import { BarChartHorizontal, BarsChart } from '../components/charts';
-import { Badge, Button, Card, Drawer, Input, Select, SectionTitle, Skeleton } from '../components/ui';
-import { useAsync } from '../hooks/useAsync';
-import { getHeatmap, getHourlyPattern, getTransactions } from '../services/api';
-import type { TransactionRow } from '../types';
+import { BarsChart } from '../components/charts.jsx';
+import { Badge, Button, Card, Drawer, Select, SectionTitle, Skeleton } from '../components/ui.jsx';
+import { useAsync } from '../hooks/useAsync.js';
+import { getHeatmap, getHourlyPattern, getTransactions } from '../services/api.js';
 
-function HeatmapCalendar({ cells }: { cells: { date: string; value: number }[] }) {
+function HeatmapCalendar({ cells }) {
   const values = cells.map((cell) => cell.value);
   const max = Math.max(...values, 1);
+
   return (
     <div className="grid grid-cols-7 gap-2">
       {cells.slice(-42).map((cell) => {
         const opacity = 0.1 + (cell.value / max) * 0.9;
+
         return (
           <div key={cell.date} className="rounded-xl border border-white/7 p-3 text-[11px] text-slate-300" style={{ backgroundColor: `rgba(0, 212, 170, ${opacity})` }}>
             <div>{format(new Date(cell.date), 'MMM d')}</div>
@@ -24,7 +25,7 @@ function HeatmapCalendar({ cells }: { cells: { date: string; value: number }[] }
   );
 }
 
-function CsvExportButton({ rows }: { rows: TransactionRow[] }) {
+function CsvExportButton({ rows }) {
   return (
     <Button
       variant="secondary"
@@ -47,7 +48,7 @@ function CsvExportButton({ rows }: { rows: TransactionRow[] }) {
 
 export function SalesAnalyticsPage() {
   const [category, setCategory] = useState('All');
-  const [selected, setSelected] = useState<TransactionRow | null>(null);
+  const [selected, setSelected] = useState(null);
   const [page, setPage] = useState(1);
   const [limit] = useState(50);
 

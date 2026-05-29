@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { FormEvent } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend } from 'chart.js';
-import { Button, Card, Input } from '../components/ui';
-import { useAuth } from '../context/AuthContext';
+import { Button, Card, Input } from '../components/ui.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
@@ -14,7 +13,7 @@ export function LoginPage() {
   const [email, setEmail] = useState('demo@smartretail.ai');
   const [password, setPassword] = useState('demo1234');
   const [step, setStep] = useState(0);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { signIn, signInDemo, token } = useAuth();
 
@@ -44,9 +43,10 @@ export function LoginPage() {
     };
   }, [step]);
 
-  async function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setError(null);
+
     try {
       await signIn(email, password);
       navigate('/dashboard');

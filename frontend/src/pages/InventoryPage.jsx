@@ -1,11 +1,10 @@
 import { useMemo, useState } from 'react';
-import { BarChartHorizontal } from '../components/charts';
-import { Badge, Button, Card, Input, Modal, SectionTitle, Skeleton } from '../components/ui';
-import { useAsync } from '../hooks/useAsync';
-import { getInventory, updateInventory } from '../services/api';
-import type { InventoryRow } from '../types';
+import { BarChartHorizontal } from '../components/charts.jsx';
+import { Badge, Button, Card, Input, Modal, SectionTitle, Skeleton } from '../components/ui.jsx';
+import { useAsync } from '../hooks/useAsync.js';
+import { getInventory, updateInventory } from '../services/api.js';
 
-function statusTone(status: InventoryRow['status']) {
+function statusTone(status) {
   if (status === 'Out') return 'danger';
   if (status === 'Low') return 'warning';
   return 'success';
@@ -13,7 +12,7 @@ function statusTone(status: InventoryRow['status']) {
 
 export function InventoryPage() {
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState<InventoryRow | null>(null);
+  const [selected, setSelected] = useState(null);
   const [stock, setStock] = useState(0);
   const [reorder, setReorder] = useState(0);
   const inventory = useAsync(() => getInventory(), [selected]);

@@ -1,15 +1,15 @@
 import { useMemo, useState } from 'react';
 import { format } from 'date-fns';
-import { RevenueLineChart } from '../components/charts';
-import { Badge, Button, Card, Input, Select, SectionTitle, Skeleton } from '../components/ui';
-import { useAsync } from '../hooks/useAsync';
-import { getInventory, runForecast } from '../services/api';
+import { RevenueLineChart } from '../components/charts.jsx';
+import { Badge, Button, Card, Select, SectionTitle, Skeleton } from '../components/ui.jsx';
+import { useAsync } from '../hooks/useAsync.js';
+import { getInventory, runForecast } from '../services/api.js';
 
 export function ForecastingPage() {
   const products = useAsync(() => getInventory(), []);
-  const [productId, setProductId] = useState<number | ''>('');
+  const [productId, setProductId] = useState('');
   const [horizon, setHorizon] = useState(7);
-  const [result, setResult] = useState<Awaited<ReturnType<typeof runForecast>> | null>(null);
+  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const selectedProduct = useMemo(() => products.data?.find((item) => item.id === Number(productId)), [products.data, productId]);
@@ -39,7 +39,7 @@ export function ForecastingPage() {
             <Skeleton className="h-48" />
           ) : (
             <>
-              <Select value={productId} onChange={(event) => setProductId(Number(event.target.value))}>
+              <Select value={productId} onChange={(event) => setProductId(event.target.value)}>
                 <option value="">Choose Product</option>
                 {(products.data ?? []).map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
               </Select>

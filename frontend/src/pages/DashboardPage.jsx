@@ -1,15 +1,14 @@
 import { useMemo, useState } from 'react';
 import { format } from 'date-fns';
-import { BarChartHorizontal, BarsChart, CategoryDonutChart, RevenueLineChart } from '../components/charts';
-import { Button, Card, CountUp, SectionTitle, Skeleton } from '../components/ui';
-import { useAsync } from '../hooks/useAsync';
-import { getProductsTop, getSalesByCategory, getSalesTrend, getSummary } from '../services/api';
-import type { DateRangeKey } from '../types';
+import { BarChartHorizontal, CategoryDonutChart, RevenueLineChart } from '../components/charts.jsx';
+import { Button, Card, CountUp, SectionTitle, Skeleton } from '../components/ui.jsx';
+import { useAsync } from '../hooks/useAsync.js';
+import { getProductsTop, getSalesByCategory, getSalesTrend, getSummary } from '../services/api.js';
 
-const rangeDays: Record<DateRangeKey, number> = { today: 1, '7d': 7, '30d': 30, custom: 30 };
+const rangeDays = { today: 1, '7d': 7, '30d': 30, custom: 30 };
 
 export function DashboardPage() {
-  const [range, setRange] = useState<DateRangeKey>('30d');
+  const [range, setRange] = useState('30d');
   const days = rangeDays[range];
   const summary = useAsync(() => getSummary(), [range]);
   const trend = useAsync(() => getSalesTrend(days), [days]);
@@ -41,7 +40,7 @@ export function DashboardPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <SectionTitle eyebrow="Overview" title="Dashboard" />
         <div className="flex gap-2">
-          {(['today', '7d', '30d', 'custom'] as DateRangeKey[]).map((item) => (
+          {['today', '7d', '30d', 'custom'].map((item) => (
             <Button key={item} variant={range === item ? 'primary' : 'secondary'} onClick={() => setRange(item)}>
               {item.toUpperCase()}
             </Button>

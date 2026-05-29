@@ -1,25 +1,25 @@
 import { useState } from 'react';
-import { Button, Card, Modal, SectionTitle } from '../components/ui';
-import { useAsync } from '../hooks/useAsync';
-import { getReports, scheduleReports } from '../services/api';
+import { Button, Card, Modal, SectionTitle } from '../components/ui.jsx';
+import { useAsync } from '../hooks/useAsync.js';
+import { getReports, scheduleReports } from '../services/api.js';
 
 const reportKinds = [
   { key: 'sales-summary', title: 'Monthly Sales Summary' },
   { key: 'inventory', title: 'Inventory Health Report' },
   { key: 'forecast', title: 'Demand Forecast Report' },
-] as const;
+];
 
 export function ReportsPage() {
-  const [open, setOpen] = useState<null | (typeof reportKinds)[number]['key']>(null);
+  const [open, setOpen] = useState(null);
   const [schedule, setSchedule] = useState(false);
-  const [frequency, setFrequency] = useState<'Daily' | 'Weekly' | 'Monthly'>('Weekly');
+  const [frequency, setFrequency] = useState('Weekly');
   const reports = {
     sales: useAsync(() => getReports('sales-summary'), []),
     inventory: useAsync(() => getReports('inventory'), []),
     forecast: useAsync(() => getReports('forecast'), []),
   };
 
-  async function toggleSchedule(next: boolean) {
+  async function toggleSchedule(next) {
     setSchedule(next);
     await scheduleReports({ enabled: next, frequency });
   }
@@ -32,7 +32,7 @@ export function ReportsPage() {
           <input type="checkbox" checked={schedule} onChange={(event) => toggleSchedule(event.target.checked)} />
           Schedule Report
         </label>
-        <select className="rounded-2xl border border-white/10 bg-surface px-4 py-3 text-sm" value={frequency} onChange={(event) => setFrequency(event.target.value as 'Daily' | 'Weekly' | 'Monthly')}>
+        <select className="rounded-2xl border border-white/10 bg-surface px-4 py-3 text-sm" value={frequency} onChange={(event) => setFrequency(event.target.value)}>
           <option>Daily</option>
           <option>Weekly</option>
           <option>Monthly</option>

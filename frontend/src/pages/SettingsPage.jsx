@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Button, Card, Input, SectionTitle } from '../components/ui';
-import { saveStoreSettings } from '../services/api';
+import { Button, Card, Input, SectionTitle } from '../components/ui.jsx';
+import { saveStoreSettings } from '../services/api.js';
 
-const tabs = ['Profile', 'Store Config', 'Notifications'] as const;
+const tabs = ['Profile', 'Store Config', 'Notifications'];
 
 export function SettingsPage() {
-  const [tab, setTab] = useState<(typeof tabs)[number]>('Profile');
+  const [tab, setTab] = useState('Profile');
   const [confirm, setConfirm] = useState('');
   const [storeName, setStoreName] = useState('SmartRetail Store');
   const [email, setEmail] = useState('manager@smartretail.ai');

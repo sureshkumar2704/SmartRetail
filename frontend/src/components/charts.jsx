@@ -16,7 +16,7 @@ ChartJS.register(ArcElement, BarElement, CategoryScale, Filler, Legend, LinearSc
 
 const palette = ['#00D4AA', '#F59E0B', '#EF4444', '#60A5FA', '#A78BFA', '#34D399'];
 
-export function RevenueLineChart({ labels, values, dashed = false }: { labels: string[]; values: number[]; dashed?: boolean }) {
+export function RevenueLineChart({ labels, values, dashed = false }) {
   return (
     <Line
       data={{
@@ -45,7 +45,7 @@ export function RevenueLineChart({ labels, values, dashed = false }: { labels: s
   );
 }
 
-export function CategoryDonutChart({ labels, values }: { labels: string[]; values: number[] }) {
+export function CategoryDonutChart({ labels, values }) {
   return (
     <Doughnut
       data={{ labels, datasets: [{ data: values, backgroundColor: palette, borderWidth: 0 }] }}
@@ -54,7 +54,7 @@ export function CategoryDonutChart({ labels, values }: { labels: string[]; value
   );
 }
 
-export function BarChartHorizontal({ labels, values, title }: { labels: string[]; values: number[]; title?: string }) {
+export function BarChartHorizontal({ labels, values, title }) {
   return (
     <Bar
       data={{ labels, datasets: [{ label: title ?? 'Value', data: values, backgroundColor: '#00D4AA' }] }}
@@ -71,11 +71,6 @@ export function BarChartHorizontal({ labels, values, title }: { labels: string[]
   );
 }
 
-export function BarsChart({ labels, values }: { labels: string[]; values: number[] }) {
-  return (
-    <Bar
-      data={{ labels, datasets: [{ label: 'Sales', data: values, backgroundColor: '#F59E0B' }] }}
-      options={{ plugins: { legend: { display: false } } }}
-    />
-  );
+export function BarsChart({ labels, values }) {
+  return <Bar data={{ labels, datasets: [{ label: 'Sales', data: values, backgroundColor: '#F59E0B' }] }} options={{ plugins: { legend: { display: false } } }} />;
 }

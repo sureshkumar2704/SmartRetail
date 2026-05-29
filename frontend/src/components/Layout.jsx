@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { Button } from './ui';
-import type { ReactNode } from 'react';
+import { useAuth } from '../context/AuthContext.jsx';
+import { Button } from './ui.jsx';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -12,7 +11,7 @@ const navItems = [
   { to: '/settings', label: 'Settings' },
 ];
 
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({ children }) {
   const { user, signOut } = useAuth();
 
   return (
@@ -28,7 +27,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <NavLink
                 key={item.to}
                 to={item.to}
-                className={({ isActive }: { isActive: boolean }) =>
+                className={({ isActive }) =>
                   `block rounded-2xl px-4 py-3 text-sm transition ${isActive ? 'bg-teal text-slate-950' : 'bg-white/5 text-slate-200 hover:bg-white/10'}`
                 }
               >

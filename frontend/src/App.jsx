@@ -1,18 +1,18 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import type { ReactNode } from 'react';
-import { AppShell } from './components/Layout';
-import { useAuth } from './context/AuthContext';
-import { DashboardPage } from './pages/DashboardPage';
-import { ForecastingPage } from './pages/ForecastingPage';
-import { InventoryPage } from './pages/InventoryPage';
-import { LoginPage } from './pages/LoginPage';
-import { ReportsPage } from './pages/ReportsPage';
-import { SalesAnalyticsPage } from './pages/SalesAnalyticsPage';
-import { SettingsPage } from './pages/SettingsPage';
+import { AppShell } from './components/Layout.jsx';
+import { useAuth } from './context/AuthContext.jsx';
+import { DashboardPage } from './pages/DashboardPage.jsx';
+import { ForecastingPage } from './pages/ForecastingPage.jsx';
+import { InventoryPage } from './pages/InventoryPage.jsx';
+import { LoginPage } from './pages/LoginPage.jsx';
+import { ReportsPage } from './pages/ReportsPage.jsx';
+import { SalesAnalyticsPage } from './pages/SalesAnalyticsPage.jsx';
+import { SettingsPage } from './pages/SettingsPage.jsx';
 
-function RequireAuth({ children }: { children: ReactNode }) {
+function RequireAuth({ children }) {
   const { token, isLoading } = useAuth();
   const location = useLocation();
+
   if (isLoading) return <div className="min-h-screen bg-navy" />;
   if (!token) return <Navigate to="/login" state={{ from: location }} replace />;
   return <AppShell>{children}</AppShell>;

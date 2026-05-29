@@ -1,42 +1,33 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { demoLogin, login } from '../services/api';
+import { demoLogin, login } from '../services/api.js';
 
-type User = { id: number; name: string; email: string };
+const AuthContext = createContext(undefined);
 
-type AuthContextValue = {
-  user: User | null;
-  token: string | null;
-  isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signInDemo: () => Promise<void>;
-  signOut: () => void;
-};
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('smartretail_token');
     const storedUser = localStorage.getItem('smartretail_user');
+
     if (storedToken && storedUser) {
       setToken(storedToken);
-      setUser(JSON.parse(storedUser) as User);
+      setUser(JSON.parse(storedUser));
     }
+
     setIsLoading(false);
   }, []);
 
-  async function persistAuth(nextToken: string, nextUser: User) {
+  async function persistAuth(nextToken, nextUser) {
     localStorage.setItem('smartretail_token', nextToken);
     localStorage.setItem('smartretail_user', JSON.stringify(nextUser));
     setToken(nextToken);
     setUser(nextUser);
   }
 
-  async function signIn(email: string, password: string) {
+  async function signIn(email, password) {
     const response = await login(email, password);
     await persistAuth(response.token, response.user);
   }
@@ -53,17 +44,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }
 
-  return (
-    <AuthContext.Provider value={{ user, token, isLoading, signIn, signInDemo, signOut }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, token, isLoading, signIn, signInDemo, signOut }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
+
   if (!context) {
     throw new Error('useAuth must be used within AuthProvider');
   }
+
   return context;
 }
