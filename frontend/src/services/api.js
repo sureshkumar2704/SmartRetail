@@ -94,4 +94,29 @@ export async function getHeatmap(days = 90) {
   return data;
 }
 
+export async function runAgent() {
+  const { data } = await api.post('/agent/run');
+  return data;
+}
+
+export async function getAgentActions(status = 'pending') {
+  const { data } = await api.get('/agent/actions', { params: { status } });
+  return data;
+}
+
+export async function approveAgentAction(id) {
+  const { data } = await api.post(`/agent/actions/${id}/approve`);
+  return data;
+}
+
+export async function rejectAgentAction(id, outcome_notes) {
+  const { data } = await api.post(`/agent/actions/${id}/reject`, null, { params: { outcome_notes } });
+  return data;
+}
+
+export async function getPurchaseOrders() {
+  const { data } = await api.get('/agent/purchase-orders');
+  return data;
+}
+
 export default api;

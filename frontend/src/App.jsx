@@ -8,6 +8,7 @@ import { LoginPage } from './pages/LoginPage.jsx';
 import { ReportsPage } from './pages/ReportsPage.jsx';
 import { SalesAnalyticsPage } from './pages/SalesAnalyticsPage.jsx';
 import { SettingsPage } from './pages/SettingsPage.jsx';
+import AgentQueuePage from './pages/AgentQueue.jsx';
 
 function RequireAuth({ children }) {
   const { token, isLoading } = useAuth();
@@ -26,6 +27,7 @@ export function App() {
       <Route path="/dashboard" element={<RequireAuth><DashboardPage /></RequireAuth>} />
       <Route path="/sales" element={<RequireAuth><SalesAnalyticsPage /></RequireAuth>} />
       <Route path="/inventory" element={<RequireAuth><InventoryPage /></RequireAuth>} />
+      <Route path="/agent-queue" element={<RequireAuth><AgentQueuePage /></RequireAuth>} />
       <Route path="/forecast" element={<RequireAuth><ForecastingPage /></RequireAuth>} />
       <Route path="/reports" element={<RequireAuth><ReportsPage /></RequireAuth>} />
       <Route path="/settings" element={<RequireAuth><SettingsPage /></RequireAuth>} />

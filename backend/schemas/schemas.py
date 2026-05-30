@@ -104,3 +104,45 @@ class StoreSettingsPayload(BaseModel):
 class ReportSchedulePayload(BaseModel):
     enabled: bool
     frequency: Literal["Daily", "Weekly", "Monthly"]
+
+
+class AgentActionOut(BaseModel):
+    id: int
+    product_id: int
+    product_name: str | None
+    sku: str | None
+    action_type: str
+    status: str
+    payload: dict | None
+
+
+class PurchaseOrderOut(BaseModel):
+    id: int
+    product_id: int
+    product_name: str | None
+    status: str
+    expected_delivery_days: int | None
+
+
+class MarkdownRecommendationIn(BaseModel):
+    product_id: int
+    target_clear_days: int = 30
+
+
+class MarkdownRecommendationOut(BaseModel):
+    id: int
+    product_id: int
+    current_stock: int
+    recommended_discount_pct: float
+    status: str
+
+
+class AnomalyOut(BaseModel):
+    id: int
+    product_id: int
+    product_name: str | None
+    severity: str
+    anomaly_type: str
+    explanation: str
+    external_signal: str | None
+    detected_at: datetime

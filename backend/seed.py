@@ -19,12 +19,12 @@ def seed_database() -> None:
             return
 
         products = [
-            Product(name="Aurora Hoodie", sku="SR-1001", category="Apparel", current_stock=24, reorder_level=18, unit_price=64.0),
-            Product(name="Nimbus Bottle", sku="SR-1002", category="Accessories", current_stock=8, reorder_level=12, unit_price=18.0),
-            Product(name="Pulse Sneakers", sku="SR-1003", category="Footwear", current_stock=42, reorder_level=16, unit_price=89.0),
-            Product(name="Echo Headphones", sku="SR-1004", category="Electronics", current_stock=5, reorder_level=10, unit_price=129.0),
-            Product(name="Orbit Mug", sku="SR-1005", category="Home", current_stock=36, reorder_level=14, unit_price=16.0),
-            Product(name="Vertex Tee", sku="SR-1006", category="Apparel", current_stock=12, reorder_level=20, unit_price=29.0),
+            Product(name="Aurora Hoodie", sku="SR-1001", category="Apparel", current_stock=24, reorder_level=18, unit_price=64.0, supplier_name="Alpha Garments", lead_time_days=7, moq=20, unit_cost=32.0, selling_price=64.0),
+            Product(name="Nimbus Bottle", sku="SR-1002", category="Accessories", current_stock=8, reorder_level=12, unit_price=18.0, supplier_name="Bottles Co", lead_time_days=5, moq=30, unit_cost=6.0, selling_price=18.0),
+            Product(name="Pulse Sneakers", sku="SR-1003", category="Footwear", current_stock=42, reorder_level=16, unit_price=89.0, supplier_name="Footworks", lead_time_days=10, moq=50, unit_cost=40.0, selling_price=89.0),
+            Product(name="Echo Headphones", sku="SR-1004", category="Electronics", current_stock=5, reorder_level=10, unit_price=129.0, supplier_name="SoundLabs", lead_time_days=14, moq=10, unit_cost=60.0, selling_price=129.0),
+            Product(name="Orbit Mug", sku="SR-1005", category="Home", current_stock=120, reorder_level=14, unit_price=16.0, supplier_name="HomeGoods", lead_time_days=4, moq=24, unit_cost=4.0, selling_price=16.0),
+            Product(name="Vertex Tee", sku="SR-1006", category="Apparel", current_stock=200, reorder_level=20, unit_price=29.0, supplier_name="Alpha Garments", lead_time_days=7, moq=50, unit_cost=10.0, selling_price=29.0),
         ]
         session.add_all(products)
         session.flush()
@@ -43,7 +43,18 @@ def seed_database() -> None:
         for day_offset in range(90):
             day = now - timedelta(days=89 - day_offset)
             for index, product in enumerate(products, start=1):
-                units = max(1, 12 + ((day_offset + index) % 9) - (index % 3))
+                # base pattern
+                units = max(0, 8 + ((day_offset + index) % 9) - (index % 3))
+                # inject spikes/drops for specific products
+                # spike for product SR-1002 three days ago
+                if product.sku == "SR-1002" and day.date() == (now - timedelta(days=3)).date():
+                    units = units * 6
+                # drop for SR-1004 five days ago
+                if product.sku == "SR-1004" and day.date() == (now - timedelta(days=5)).date():
+                    units = max(0, int(units * 0.2))
+                # create slow movers with high stock (for markdown) for SR-1006
+                if product.sku == "SR-1006":
+                    units = max(0, int(units * 0.1))
                 revenue = round(units * product.unit_price, 2)
                 transactions.append(
                     Transaction(
@@ -60,3 +71,11 @@ def seed_database() -> None:
                 sales_rows.append(DailySales(product_id=product.id, day=day.date(), units=units, revenue=revenue))
         session.add_all(transactions)
         session.add_all(sales_rows)
+        # seed a couple of products with low stock to trigger reorder agent
+        # ensure some products have stock below reorder point
+        p_echo = session.query(Product).filter(Product.sku == "SR-1004").first()
+        if p_echo:
+            p_echo.current_stock = 3
+        p_nimbus = session.query(Product).filter(Product.sku == "SR-1002").first()
+        if p_nimbus:
+            p_nimbus.current_stock = 4

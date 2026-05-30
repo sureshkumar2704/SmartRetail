@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 
-from sqlalchemy import Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, String, Text, JSON
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -29,6 +29,12 @@ class Product(Base):
     current_stock = Column(Integer, default=0)
     reorder_level = Column(Integer, default=20)
     unit_price = Column(Float, default=0.0)
+    # inventory / procurement fields required by reorder engine and markdown optimizer
+    supplier_name = Column(String(200), nullable=True)
+    lead_time_days = Column(Integer, nullable=True, default=7)
+    moq = Column(Integer, nullable=True, default=10)
+    unit_cost = Column(Float, nullable=True, default=0.0)
+    selling_price = Column(Float, nullable=True, default=0.0)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
@@ -77,3 +83,67 @@ class ReportSchedule(Base):
     id = Column(Integer, primary_key=True, index=True)
     frequency = Column(String(16), nullable=False, default="Weekly")
     enabled = Column(Boolean, default=False)
+
+
+class Anomaly(Base):
+    __tablename__ = "anomalies"
+    id = Column(Integer, primary_key=True)
+    product_id = Column(Integer, ForeignKey("products.id"))
+    detected_at = Column(DateTime, default=datetime.utcnow)
+    anomaly_type = Column(String(50))
+    severity = Column(String(20))
+    z_score = Column(Float)
+    explanation = Column(Text)
+    external_signal = Column(String(200))
+    resolved = Column(Boolean, default=False)
+
+
+class AgentAction(Base):
+    __tablename__ = "agent_actions"
+    id = Column(Integer, primary_key=True)
+    product_id = Column(Integer, ForeignKey("products.id"))
+    action_type = Column(String(50))
+    created_at = Column(DateTime, default=datetime.utcnow)
+    status = Column(String(20), default="pending")
+    payload = Column(JSON)
+    triggered_by = Column(Integer, ForeignKey("anomalies.id"), nullable=True)
+    resolved_at = Column(DateTime, nullable=True)
+    outcome_notes = Column(Text, nullable=True)
+
+
+class PurchaseOrder(Base):
+    __tablename__ = "purchase_orders"
+    id = Column(Integer, primary_key=True)
+    product_id = Column(Integer, ForeignKey("products.id"))
+    agent_action_id = Column(Integer, ForeignKey("agent_actions.id"))
+    supplier_name = Column(String(200))
+    order_qty = Column(Integer)
+    unit_cost = Column(Float)
+    expected_delivery_days = Column(Integer)
+    status = Column(String(30), default="draft")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class MarkdownRecommendation(Base):
+    __tablename__ = "markdown_recommendations"
+    id = Column(Integer, primary_key=True)
+    product_id = Column(Integer, ForeignKey("products.id"))
+    current_stock = Column(Integer)
+    days_to_clear = Column(Integer)
+    current_price = Column(Float)
+    recommended_discount_pct = Column(Float)
+    projected_margin_impact = Column(Float)
+    hold_scenario_margin = Column(Float)
+    deadline = Column(DateTime)
+    status = Column(String(20), default="pending")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class ActionOutcome(Base):
+    __tablename__ = "action_outcomes"
+    id = Column(Integer, primary_key=True)
+    agent_action_id = Column(Integer, ForeignKey("agent_actions.id"))
+    expected_result = Column(JSON)
+    actual_result = Column(JSON)
+    accuracy_score = Column(Float, nullable=True)
+    recorded_at = Column(DateTime, default=datetime.utcnow)
